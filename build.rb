@@ -5,7 +5,7 @@
 #
 # The final distribuition you can find in ./build
 
-SUBMODULES = %w(kext fuse sshfs framework)
+SUBMODULES = %w(kext fuse sshfs framework support)
 CWD = File.dirname(__FILE__)
 
 debug = ARGV.include?('--debug')
@@ -26,7 +26,6 @@ for project in SUBMODULES do
 end
 
 # fix permissions
-system('find build/root/ -not -user root | xargs sudo chown root')
-system('find build/root/ -not -group wheel -and -not -group admin | xargs sudo chgrp admin')
+system('sudo chown -R root:wheel build/root/')
 
 system('/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker --doc fuse4x.pmdoc --out build/Fuse4X.pkg') or abort('Cannot create install package')
