@@ -18,6 +18,9 @@ for project in SUBMODULES do
   script = File.join(CWD, '..', project, 'build.rb')
   abort("Module #{project} is not checked out") unless File.exists?(script)
 
+  # remove subproject working directory
+  system("rm -rf ../#{project}/build")
+
   cmd = "#{script} --root #{root_dir}"
   cmd += ' --debug' if debug
   puts "Running '#{cmd}'"
