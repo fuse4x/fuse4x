@@ -7,6 +7,7 @@
 
 SUBMODULES = %w(kext fuse sshfs framework support)
 CWD = File.dirname(__FILE__)
+FUSE4X_VERSION = '0.8.5'
 
 debug = ARGV.include?('--debug')
 
@@ -31,4 +32,4 @@ end
 # fix permissions
 system('sudo chown -R root:wheel build/root/')
 
-system('/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker --doc fuse4x.pmdoc --out build/Fuse4X.pkg') or abort('Cannot create install package')
+system("/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker --doc fuse4x.pmdoc --out build/Fuse4X-#{FUSE4X_VERSION}.pkg") or abort('Cannot create install package')
