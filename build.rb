@@ -5,9 +5,10 @@
 #
 # The final distribuition you can find in ./build
 
-SUBMODULES = %w(kext fuse sshfs framework support)
+SUBMODULES = %w(kext fuse framework support)
 CWD = File.dirname(__FILE__)
 FUSE4X_VERSION = '0.8.6'
+SSHFS_VERSION = '2.2.0' # '2.2' is the upstream version, '0' - fuse4x revision
 
 debug = ARGV.include?('--debug')
 
@@ -32,4 +33,15 @@ end
 # fix permissions
 system('sudo chown -R root:wheel build/root/')
 
-system("/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker --doc fuse4x.pmdoc --out build/Fuse4X-#{FUSE4X_VERSION}.pkg") or abort('Cannot create install package')
+system("/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -m --doc fuse4x.pmdoc --out build/Fuse4X-#{FUSE4X_VERSION}.pkg") or abort('Cannot create install package')
+
+
+
+##### BUILD SSHFS ##########
+sshfs_dir = File.expand_path(File.join(build_dir, 'sshfs'))
+`mkdir -p #{sshfs_dir}`
+cmd = "../sshfs/build.rb --root #{sshfs_dir}"
+cmd += ' --debug' if debug
+system(cmd) or abort("Cannot run script in sshfs")
+system('sudo chown -R root:wheel build/sshfs/')
+system("cd build/sshfs && zip -rq ../sshfs-#{SSHFS_VERSION}.zip .")
