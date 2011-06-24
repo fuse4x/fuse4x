@@ -8,7 +8,7 @@
 SUBMODULES = %w(kext fuse framework support)
 CWD = File.dirname(__FILE__)
 FUSE4X_VERSION = '0.8.7'
-SSHFS_VERSION = '2.2.0' # '2.2' is the upstream version, '0' - fuse4x revision
+SSHFS_VERSION = '2.2.1' # first two numbers - is the upstream version, third - fuse4x revision
 
 debug = ARGV.include?('--debug')
 
@@ -40,7 +40,7 @@ system("/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/Packag
 ##### BUILD SSHFS ##########
 sshfs_dir = File.expand_path(File.join(build_dir, 'sshfs'))
 `mkdir -p #{sshfs_dir}`
-cmd = "../sshfs/build.rb --root #{sshfs_dir}"
+cmd = "../sshfs/build.rb --root #{sshfs_dir} --static"
 cmd += ' --debug' if debug
 system(cmd) or abort("Cannot run script in sshfs")
 system('sudo chown -R root:wheel build/sshfs/')
