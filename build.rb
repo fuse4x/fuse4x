@@ -3,7 +3,7 @@
 # Possible flags are:
 #   --debug       this builds distribuition with debug flags enabled
 #
-# The final distribuition you can find in ./build
+# The final distribuition you can find in ./build/
 
 SUBMODULES = %w(kext fuse framework support)
 CWD = File.dirname(__FILE__)
@@ -23,7 +23,7 @@ for project in SUBMODULES do
   # remove subproject working directory
   system("rm -rf ../#{project}/build")
 
-  cmd = "#{script} --root #{root_dir}"
+  cmd = "#{script} --root #{root_dir} --clean"
   cmd += ' --debug' if debug
   puts "Running '#{cmd}'"
   system(cmd) or abort("Cannot run script in #{project}")
@@ -40,7 +40,7 @@ system("/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/Packag
 ##### BUILD SSHFS ##########
 sshfs_dir = File.expand_path(File.join(build_dir, 'sshfs'))
 `mkdir -p #{sshfs_dir}`
-cmd = "../sshfs/build.rb --root #{sshfs_dir} --static"
+cmd = "../sshfs/build.rb --root #{sshfs_dir} --clean --static"
 cmd += ' --debug' if debug
 system(cmd) or abort("Cannot run script in sshfs")
 system('sudo chown -R root:wheel build/sshfs/')
