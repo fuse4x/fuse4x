@@ -7,7 +7,7 @@
 
 SUBMODULES = %w(kext fuse framework support)
 CWD = File.dirname(__FILE__)
-FUSE4X_VERSION = '0.8.11'
+FUSE4X_VERSION = '0.8.12'
 SSHFS_VERSION = '2.3.0' # first two numbers - is the upstream version, third - fuse4x revision
 
 debug = ARGV.include?('--debug')
