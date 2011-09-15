@@ -27,23 +27,25 @@ versions = [
   ['fuse/include/fuse_version.h', "^#define FUSE4X_VERSION_LITERAL #{old_version}$", 1],
   ['kext/common/fuse_version.h', "^#define FUSE4X_VERSION_LITERAL #{old_version}$", 1],
   ['fuse4x/build.rb', "^FUSE4X_VERSION = '#{old_version}'$", 1],
-  ['fuse4x/fuse4x.pmdoc/01root.xml', "<version>#{old_version}</version>", 1],
-  ['fuse4x/fuse4x.pmdoc/01root.xml', "version=\"#{old_version}\"", 2],
+  ['fuse4x/Info.plist', "<string>#{old_version}</string>", 1],
   ['kext/kext-Info.plist', "<string>#{old_version}</string>", 2],
   ['support/fuse4x.fs-Info.plist', "<string>#{old_version}</string>", 1]
 ]
 
 for pair in versions do
-  filename,regexp,count = *pair
+  filename,regexp,required_count = *pair
   filename = '../' + filename
 
+  count = 0
   text = File.read(filename)
   text.gsub!(Regexp.new(regexp)) {|match|
-    count = count - 1
+    count = count + 1
     match.sub(old_version, new_version)
   }
 
-  puts "In file #{filename}, string '#{regexp}' should be matched #{count} more times" if (count > 0)
+  if count != required_count then
+    puts "In file #{filename}, string '#{regexp}' should be matched #{required_count} times but #{count} contained"
+  end
 
   File.open(filename, "w") {|file| file.puts text}
 end

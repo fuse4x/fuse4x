@@ -33,9 +33,19 @@ end
 # fix permissions
 system('sudo chown -R root:wheel build/root/')
 
-system("/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -m --doc fuse4x.pmdoc --out build/Fuse4X-#{FUSE4X_VERSION}.pkg") or abort('Cannot create install package')
-
-
+# create *.dmg distribution
+system('/Developer/usr/bin/packagemaker ' +
+  '--root build/root ' +
+  '--id org.fuse4x.Fuse4X ' +
+  '--title Fuse4X ' +
+  '--info Info.plist ' +
+  '--out build/Fuse4X.pkg ' +
+  "--version #{FUSE4X_VERSION} " +
+  '--scripts Scripts ' +
+  '--resources Resources ' +
+  '--target 10.3 ' +
+  '--no-recommend') or abort('Cannot create install package')
+system("hdiutil create -quiet -fs HFS+ -volname Fuse4X -srcfolder build/Fuse4X.pkg build/Fuse4X-#{FUSE4X_VERSION}.dmg") or abort('Cannot create *.dmg file')
 
 ##### BUILD SSHFS ##########
 sshfs_dir = File.expand_path(File.join(build_dir, 'sshfs'))
