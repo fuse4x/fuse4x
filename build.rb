@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 # This script is intended to build installable distribution of Fuse4X
-# Possible flags are:
-#   --debug       this builds distribuition with debug flags enabled
-#
 # The final distribuition you can find in ./build/
 
 SUBMODULES = %w(kext fuse framework support)
@@ -10,7 +7,7 @@ CWD = File.dirname(__FILE__)
 FUSE4X_VERSION = '0.8.13'
 SSHFS_VERSION = '2.3.0' # first two numbers - is the upstream version, third - fuse4x revision
 
-debug = ARGV.include?('--debug')
+# TODO Utilize 'xcodebuild install'?
 
 build_dir = File.join(CWD, 'build')
 root_dir = File.expand_path(File.join(build_dir, 'root'))
@@ -23,8 +20,7 @@ for project in SUBMODULES do
   # remove subproject working directory
   system("rm -rf ../#{project}/build")
 
-  cmd = "#{script} --root #{root_dir} --clean"
-  cmd += ' --debug' if debug
+  cmd = "#{script} --root #{root_dir} --release"
   puts "Running '#{cmd}'"
   system(cmd) or abort("Cannot run script in #{project}")
   puts "\n\n"
@@ -50,8 +46,7 @@ system("hdiutil create -quiet -fs HFS+ -volname Fuse4X -srcfolder build/Fuse4X.p
 ##### BUILD SSHFS ##########
 sshfs_dir = File.expand_path(File.join(build_dir, 'sshfs'))
 `mkdir -p #{sshfs_dir}`
-cmd = "../sshfs/build.rb --root #{sshfs_dir} --clean --static"
-cmd += ' --debug' if debug
+cmd = "../sshfs/build.rb --root #{sshfs_dir} --release"
 system(cmd) or abort("Cannot run script in sshfs")
 system('sudo chown -R root:wheel build/sshfs/')
 system("cd build/sshfs && zip -rq ../sshfs-#{SSHFS_VERSION}.zip .")
