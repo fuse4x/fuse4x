@@ -5,7 +5,7 @@
        <key>CFBundleIdentifier</key>
        <string>org.fuse4x.Fuse4X</string>
        <key>CFBundleShortVersionString</key>
-       <string>0.8.13</string>
+       <string>0.8.14</string>
        <key>IFMajorVersion</key>
        <integer>0</integer>
        <key>IFMinorVersion</key>
