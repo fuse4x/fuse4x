@@ -12,8 +12,6 @@ if [ $? -eq 0 ] ; then
 	kextunload -b $KEXT_ID;
 
 	if [ $? -ne 0 ] ; then
-		osascript <<-END
-		    say "Older version of Fuse4X in use. Please restart your computer to use the new version."
-		END
+		/usr/bin/osascript -e 'tell app "Installer" to display alert "Older version of Fuse4X still in use. Please restart your computer to use the new version."'
 	fi
 fi
