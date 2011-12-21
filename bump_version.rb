@@ -2,11 +2,9 @@
 
 # The script accepts 2 parameters, the old version and the new version
 # bump_version.rb 0.8.1 0.8.2
-# It creates tags fuse4x_X_X_X in the current submodules, and then bumps versions
-# in the sourcecode plus creates git commits for it.
+# It bumps version and then creates tags fuse4x_X_X_X in submodules.
 
-FUSE4X_VERSION = '(\d+\.\d+\.\d+)'
-VERSION_REGEXP = Regexp.new("^#{FUSE4X_VERSION}$")
+VERSION_REGEXP = /^(\d+\.\d+\.\d+)$/
 
 ARGV.length == 2 or abort('Exactly 2 parameters expected')
 old_version,new_version = *ARGV
@@ -16,13 +14,12 @@ new_version =~ VERSION_REGEXP or abort("Second argument (#{new_version}) does no
 # sshfs has a separate release cycle
 SUBMODULES = %w(fuse4x kext fuse framework support fuse4x.github.com)
 
-# Fisrt tag all modules
-tagname = 'fuse4x_' + ARGV[0].gsub('.', '_')
+
 for project in SUBMODULES do
   system("cd ../#{project} && git diff --exit-code HEAD") or abort("Project #{project} contains local changes")
-  `cd ../#{project} && git tag #{tagname}`
 end
 
+# Bump version
 versions = [
   ['fuse/include/fuse_version.h', "^#define FUSE4X_VERSION_LITERAL #{old_version}$", 1],
   ['kext/common/fuse_version.h', "^#define FUSE4X_VERSION_LITERAL #{old_version}$", 1],
@@ -51,6 +48,7 @@ for pair in versions do
 end
 
 
+tagname = 'fuse4x_' + new_version.gsub('.', '_')
 for project in SUBMODULES do
-  `cd ../#{project} && git commit -am "Bump version from #{old_version} to #{new_version}"`
+  `cd ../#{project} && git commit -am "Bump version from #{old_version} to #{new_version}" && git tag #{tagname}`
 end
