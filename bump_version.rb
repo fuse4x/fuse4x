@@ -4,12 +4,13 @@
 # bump_version.rb 0.8.1 0.8.2
 # It bumps version and then creates tags fuse4x_X_X_X in submodules.
 
-VERSION_REGEXP = /^(\d+\.\d+\.\d+)$/
+ARGV.length == 1 or abort('Exactly 1 parameter (version) expected')
+new_version = ARGV[0]
+new_version =~ /^\d+\.\d+(\.\d+)?$/ or abort("Argument (#{new_version}) does not look like a valid version")
 
-ARGV.length == 2 or abort('Exactly 2 parameters expected')
-old_version,new_version = *ARGV
-old_version =~ VERSION_REGEXP or abort("Fisrt argument (#{old_version}) does not look like a valid version")
-new_version =~ VERSION_REGEXP or abort("Second argument (#{new_version}) does not look like a valid version")
+# Get the old version from build.rb
+File.read('build.rb') =~ /^FUSE4X_VERSION = '(\d+\.\d+(\.\d+)?)'$/
+old_version = $1
 
 # sshfs has a separate release cycle
 SUBMODULES = %w(fuse4x kext fuse framework support fuse4x.github.com)
@@ -50,5 +51,5 @@ end
 
 tagname = 'fuse4x_' + new_version.gsub('.', '_')
 for project in SUBMODULES do
-  `cd ../#{project} && git commit -am "Bump version from #{old_version} to #{new_version}" && git tag #{tagname}`
+  `cd ../#{project}; git commit -am "Bump version from #{old_version} to #{new_version}"; git tag #{tagname}`
 end
