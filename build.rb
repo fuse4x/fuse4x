@@ -2,6 +2,8 @@
 # This script is intended to build installable distribution of Fuse4X
 # The final distribuition you can find in ./build/
 
+require 'fileutils'
+
 SUBMODULES = %w(kext fuse framework support)
 CWD = File.dirname(__FILE__)
 FUSE4X_VERSION = '0.8.14'
@@ -28,6 +30,7 @@ end
 
 # fix permissions
 system('sudo chown -R root:wheel build/root/')
+Dir.mkdir('build/package')
 
 # create *.dmg distribution
 system('/Developer/usr/bin/packagemaker ' +
@@ -35,13 +38,16 @@ system('/Developer/usr/bin/packagemaker ' +
   '--id org.fuse4x.Fuse4X ' +
   '--title Fuse4X ' +
   '--info Info.plist ' +
-  '--out build/Fuse4X.pkg ' +
+  '--out build/package/Fuse4X.pkg ' +
   "--version #{FUSE4X_VERSION} " +
   '--scripts Scripts ' +
   '--resources Resources ' +
   '--target 10.3 ' +
   '--no-recommend') or abort('Cannot create install package')
-system("hdiutil create -quiet -fs HFS+ -volname Fuse4X -srcfolder build/Fuse4X.pkg build/Fuse4X-#{FUSE4X_VERSION}.dmg") or abort('Cannot create *.dmg file')
+
+FileUtils.copy('build/root/Library/Filesystems/fuse4x.fs/Contents/Executables/uninstall.sh', 'build/package/Uninstall')
+
+system("hdiutil create -quiet -fs HFS+ -volname Fuse4X -srcfolder build/package build/Fuse4X-#{FUSE4X_VERSION}.dmg") or abort('Cannot create *.dmg file')
 
 ##### BUILD SSHFS ##########
 sshfs_dir = File.expand_path(File.join(build_dir, 'sshfs'))
