@@ -6,7 +6,7 @@ require 'fileutils'
 
 SUBMODULES = %w(kext fuse framework support)
 CWD = File.dirname(__FILE__)
-FUSE4X_VERSION = '0.8.14'
+FUSE4X_VERSION = '0.9.0'
 SSHFS_VERSION = '2.3.0' # first two numbers - is the upstream version, third - fuse4x revision
 
 # TODO Utilize 'xcodebuild install'?
