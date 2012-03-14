@@ -32,8 +32,24 @@ end
 system('sudo chown -R root:wheel build/root/')
 Dir.mkdir('build/package')
 
+PACKAGEMAKER_BIN = [
+  '/Developer/usr/bin/packagemaker',
+  '/Applications/PackageMaker.app/Contents/MacOS/PackageMaker'
+]
+
+for bin in PACKAGEMAKER_BIN do
+  if File.exists?(bin)
+    packagemaker_bin = bin
+    break
+  end
+end
+
+unless packagemaker_bin
+  abort('Cannot find packagemaker binaries')
+end
+
 # create *.dmg distribution
-system('/Developer/usr/bin/packagemaker ' +
+system(packagemaker_bin + ' ' +
   '--root build/root ' +
   '--id org.fuse4x.Fuse4X ' +
   '--title Fuse4X ' +
